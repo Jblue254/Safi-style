@@ -62,17 +62,26 @@ def register(request):
 def create_order(request, pk):
     product = get_object_or_404(Product, pk=pk)
 
-    order = Order.objects.create(
-        user=request.user
-    )
+    if request.method == "POST":
+        quantity = int(request.POST.get("quantity"))
 
-    OrderItem.objects.create(
-        order=order,
-        product=product,
-        quantity=1
-    )
+        order = Order.objects.create(
+            user=request.user
+        )
 
-    return redirect("order_list")
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=quantity
+        )
+
+        return redirect("order_list")
+
+    return render(
+        request,
+        "create_order.html",
+        {"product": product}
+    )
 @login_required
 def order_detail(request, pk):
 
