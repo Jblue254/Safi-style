@@ -20,8 +20,13 @@ urlpatterns = [
         name="order_list"
     ),
     path(
-    "register/",
-    views.register,
-    name="register"
+        "register/",
+        views.register,
+        name="register"
     ),
+    path(
+    'logout/',
+    views.logout_user,
+    name='logout'
+),
 ]

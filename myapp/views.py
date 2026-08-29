@@ -3,7 +3,12 @@ from .models import Product, Order
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
+from django.contrib.auth import logout
 
+
+def logout_user(request):
+    logout(request)
+    return redirect('/')
 
 def product_list(request):
     products = Product.objects.all()
