@@ -19,4 +19,9 @@ urlpatterns = [
         views.order_list,
         name="order_list"
     ),
+    path(
+    "register/",
+    views.register,
+    name="register"
+    ),
 ]
