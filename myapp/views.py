@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Product, Order
+from .models import Product, Order , OrderItem
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
@@ -58,3 +58,18 @@ def register(request):
         "register.html",
         {"form": form}
     )
+@login_required
+def create_order(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+
+    order = Order.objects.create(
+        user=request.user
+    )
+
+    OrderItem.objects.create(
+        order=order,
+        product=product,
+        quantity=1
+    )
+
+    return redirect("order_list")
