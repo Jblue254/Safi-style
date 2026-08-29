@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Safi Style Store</title>
+</head>
+<body>
+
+<nav>
+    <a href="/">Home</a>
+
+    {% if user.is_authenticated %}
+        <a href="/orders/">My Orders</a>
+        <a href="/logout/">Logout</a>
+        Welcome {{ user.username }}
+    {% else %}
+        <a href="/login/">Login</a>
+        <a href="/register/">Register</a>
+    {% endif %}
+</nav>
+
+<hr>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
