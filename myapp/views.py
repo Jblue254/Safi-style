@@ -73,3 +73,17 @@ def create_order(request, pk):
     )
 
     return redirect("order_list")
+@login_required
+def order_detail(request, pk):
+
+    order = get_object_or_404(
+        Order,
+        pk=pk,
+        user=request.user
+    )
+
+    return render(
+        request,
+        "order_detail.html",
+        {"order": order}
+    )
