@@ -1,19 +1,74 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Orders</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<h1>My Orders</h1>
+{% block content %}
 
-{% for order in orders %}
-    <p>
-        Order #{{ order.id }}
+<div class="max-w-4xl mx-auto">
+
+
+<!-- Page Header -->
+<div class="text-center mb-10">
+    <div class="text-5xl mb-4">📦</div>
+
+    <h1 class="text-4xl font-bold text-gray-900">
+        My Orders
+    </h1>
+
+    <p class="text-gray-500 mt-2">
+        View your orders and purchases.
     </p>
-{% empty %}
-    <p>No Orders Found</p>
-{% endfor %}
+</div>
 
-</body>
-</html>
+<!-- Orders -->
+<div class="space-y-4">
+
+    {% for order in orders %}
+
+    <div class="bg-white rounded-xl shadow-md p-6 flex items-center justify-between">
+
+        <div>
+            <p class="text-sm text-gray-500">
+                Order
+            </p>
+
+            <p class="text-xl font-bold text-gray-900">
+                #{{ order.id }}
+            </p>
+        </div>
+
+        <span class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full text-sm font-semibold">
+            Order Placed
+        </span>
+
+    </div>
+
+    {% empty %}
+
+    <div class="bg-white rounded-2xl shadow-md p-10 text-center">
+
+        <div class="text-5xl mb-4">
+            📭
+        </div>
+
+        <h2 class="text-xl font-bold text-gray-900 mb-2">
+            No Orders Found
+        </h2>
+
+        <p class="text-gray-500 mb-6">
+            You haven't placed any orders yet.
+        </p>
+
+        <a href="/"
+           class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+            Browse Products
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+
+</div>
+
+{% endblock %}
