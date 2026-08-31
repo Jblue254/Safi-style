@@ -6,20 +6,15 @@
 
 {% for order in orders %}
 
-    <h3>Order #{{ order.id }}</h3>
-
-    <ul>
-        {% for item in order.orderitem_set.all %}
-            <li>
-                {{ item.product.name }}
-                (Qty: {{ item.quantity }})
-            </li>
-        {% endfor %}
-    </ul>
+<p>
+    <a href="{% url 'order_detail' order.id %}">
+        Order #{{ order.id }}
+    </a>
+</p>
 
 {% empty %}
 
-    <p>No Orders Found</p>
+<p>No Orders Found</p>
 
 {% endfor %}
 
