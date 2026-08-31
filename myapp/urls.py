@@ -31,8 +31,19 @@ urlpatterns = [
         name="register"
     ),
     path(
-    'logout/',
-    views.logout_user,
-    name='logout'
-),
+        'logout/',
+        views.logout_user,
+        name='logout'
+    ),
+    path(
+        "order/create/<int:pk>/",
+        views.create_order,
+        name="create_order"
+    ),
+    path(
+        "orders/<int:pk>/",
+        views.order_detail,
+        name="order_detail"
+    ),
+
 ]
