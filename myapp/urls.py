@@ -15,9 +15,9 @@ urlpatterns = [
     ),
 
     path(
-    "product/<int:pk>/order/",
-    views.place_order,
-    name="place_order"
+        "product/<int:pk>/order/",
+        views.place_order,
+        name="place_order"
     ),
 
     path(
@@ -29,6 +29,11 @@ urlpatterns = [
         "register/",
         views.register,
         name="register"
+    ),
+    path(
+        "login/",
+        views.login_user,
+        name="login"
     ),
     path(
         'logout/',

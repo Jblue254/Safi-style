@@ -19,10 +19,14 @@ class Product(models.Model):
         max_digits=10,
         decimal_places=2
     )
+    image = models.ImageField(
+        upload_to='products/',
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return self.name
-
 
 class Order(models.Model):
     user = models.ForeignKey(

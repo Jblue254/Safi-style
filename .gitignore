@@ -1,1 +1,3 @@
-__pycache__
+my-env/
+__pycache__/
+*.pyc
