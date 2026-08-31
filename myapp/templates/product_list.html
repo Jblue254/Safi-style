@@ -23,10 +23,17 @@
 <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden">
 
     <!-- Product Icon -->
-    <div class="bg-indigo-50 h-40 flex items-center justify-center">
-        <span class="text-6xl"></span>
-    </div>
+    <div class="bg-indigo-50 h-56 flex items-center justify-center overflow-hidden">
 
+    {% if product.image %}
+        <img src="{{ product.image.url }}"
+             alt="{{ product.name }}"
+             class="w-full h-full object-cover">
+    {% else %}
+        <span class="text-6xl">Not Found</span>
+    {% endif %}
+
+</div>
     <!-- Product Information -->
     <div class="p-6">
 
