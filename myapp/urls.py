@@ -15,6 +15,12 @@ urlpatterns = [
     ),
 
     path(
+    "product/<int:pk>/order/",
+    views.place_order,
+    name="place_order"
+    ),
+
+    path(
         "orders/",
         views.order_list,
         name="order_list"

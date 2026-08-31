@@ -1,21 +1,20 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orders</title>
+</head>
+<body>
 
-{% block content %}
-
-<h1>My Orders</h1>
+<!-- Orders -->
+<div class="space-y-4">
 
 {% for order in orders %}
-
-<p>
-    <a href="{% url 'order_detail' order.id %}">
+    <p>
         Order #{{ order.id }}
-    </a>
-</p>
-
+    </p>
 {% empty %}
-
-<p>No Orders Found</p>
-
+    <p>No Orders Found</p>
 {% endfor %}
 
-{% endblock %}
+</body>
+</html>

@@ -1,27 +1,140 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Safi Style Store</title>
+
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
 </head>
-<body>
 
-<nav>
-    <a href="/">Home</a>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
 
-    {% if user.is_authenticated %}
-        <a href="/orders/">My Orders</a>
-        <a href="{% url 'logout' %}">Logout</a>
-        Welcome {{ user.username }}
-    {% else %}
-        <a href="/login/">Login</a>
-        <a href="/register/">Register</a>
-    {% endif %}
+
+<!-- Navigation -->
+<nav class="bg-white shadow-md">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+
+        <!-- Logo -->
+        <a href="/" class="text-2xl font-bold text-indigo-600">
+            Safi Style
+        </a>
+
+        <!-- Navigation Links -->
+        <div class="flex items-center gap-6">
+
+            <a href="/"
+               class="text-gray-600 hover:text-indigo-600 font-medium transition">
+                Home
+            </a>
+
+            {% if user.is_authenticated %}
+
+                <a href="/orders/"
+                   class="text-gray-600 hover:text-indigo-600 font-medium transition">
+                    My Orders
+                </a>
+
+                <span class="text-sm text-gray-500">
+                    Welcome, <strong class="text-gray-800">{{ user.username }}</strong>
+                </span>
+
+                <a href="{% url 'logout' %}"
+                   class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                    Logout
+                </a>
+
+            {% else %}
+
+                <a href="/login/"
+                   class="text-gray-600 hover:text-indigo-600 font-medium transition">
+                    Login
+                </a>
+
+                <a href="/register/"
+                   class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                    Register
+                </a>
+
+            {% endif %}
+
+        </div>
+    </div>
 </nav>
 
-<hr>
+<!-- Main Content -->
+<main class="max-w-6xl mx-auto px-6 py-10">
 
-{% block content %}
-{% endblock %}
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+<footer class="bg-gradient-to-r from-indigo-950 via-purple-950 to-indigo-900 text-white mt-16">
+    <div class="max-w-6xl mx-auto px-6 py-10">
+
+
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+
+        <!-- Brand -->
+        <div class="text-center md:text-left">
+            <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-xl">
+                    ✦
+                </div>
+
+                <h3 class="text-2xl font-bold tracking-wide">
+                    Safi Style
+                </h3>
+            </div>
+
+            <p class="text-indigo-200 text-sm">
+                Quality products. Simple shopping.
+            </p>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="flex items-center gap-6 text-sm">
+            <a href="/" class="text-indigo-200 hover:text-white transition">
+                Home
+            </a>
+
+            {% if user.is_authenticated %}
+                <a href="/orders/" class="text-indigo-200 hover:text-white transition">
+                    My Orders
+                </a>
+            {% else %}
+                <a href="/login/" class="text-indigo-200 hover:text-white transition">
+                    Login
+                </a>
+
+                <a href="/register/" class="text-indigo-200 hover:text-white transition">
+                    Register
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Bottom -->
+    <div class="border-t border-white/10 mt-8 pt-5 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p class="text-xs text-indigo-300">
+            &copy; 2026 Safi Style Store
+        </p>
+
+        <p class="text-xs text-indigo-400">
+            Built with Django & Tailwind CSS
+        </p>
+    </div>
+
+</div>
+
+
+</footer>
 
 </body>
 </html>
