@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Product, Order
+from .models import OrderItem, Product, Order
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
@@ -91,7 +91,7 @@ def create_order(request, pk):
             quantity=quantity
         )
 
-        return redirect("order_list")
+        return redirect("order_detail", pk=order.id)
 
     return render(
         request,
