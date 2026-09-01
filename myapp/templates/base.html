@@ -1,133 +1,316 @@
-<!DOCTYPE html>
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth.models import User
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safi Style Store</title>
+from .models import Category, Product, Order, OrderItem
 
 
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
+class ProductViewTest(TestCase):
 
-</head>
+    def setUp(self):
+        category = Category.objects.create(
+            name="Electronics"
+        )
 
-<body class="bg-gray-50 text-gray-800 min-h-screen">
+        Product.objects.create(
+            name="Laptop",
+            price=1000,
+            category=category
+        )
+
+    def test_product_list_view(self):
+        response = self.client.get("/")
+
+        self.assertEqual(
+            response.status_code,
+            200
+        )
+
+        self.assertContains(
+            response,
+            "Laptop"
+        )
+class ProductDetailTest(TestCase):
+
+    def setUp(self):
+        self.category = Category.objects.create(
+            name="Electronics"
+        )
+
+        self.product = Product.objects.create(
+            name="Laptop",
+            price=1000,
+            category=self.category
+        )
+
+    def test_product_detail_view(self):
+        response = self.client.get(
+            reverse(
+                "product_detail",
+                kwargs={"pk": self.product.pk}
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            200
+        )
+
+        self.assertContains(
+            response,
+            "Laptop"
+        )
+
+    def test_product_detail_missing_product(self):
+        response = self.client.get(
+            reverse(
+                "product_detail",
+                kwargs={"pk": 9999}
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            404
+        )
+
+class AuthenticationTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="john",
+            password="password123"
+        )
+
+    def test_user_can_login(self):
+
+        login_successful = self.client.login(
+            username="john",
+            password="password123"
+        )
+
+        self.assertTrue(login_successful)
+
+    def test_user_cannot_login_with_wrong_password(self):
+
+        login_successful = self.client.login(
+            username="john",
+            password="wrongpassword"
+        )
+
+        self.assertFalse(login_successful)
+
+    def test_anonymous_user_cannot_access_orders(self):
+
+        response = self.client.get(
+            reverse("order_list")
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302
+        )
+
+    def test_logged_in_user_can_access_orders(self):
+
+        self.client.login(
+            username="john",
+            password="password123"
+        )
+
+        response = self.client.get(
+            reverse("order_list")
+        )
+
+        self.assertEqual(
+            response.status_code,
+            200
+        )
 
 
-<!-- Navigation -->
-<nav class="bg-white shadow-md">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+class OrderOwnershipTest(TestCase):
 
-        <!-- Logo -->
-        <a href="/" class="text-2xl font-bold text-indigo-600">
-            Safi Style
-        </a>
+    def setUp(self):
 
-        <!-- Navigation Links -->
-        <div class="flex items-center gap-6">
+        self.user1 = User.objects.create_user(
+            username="john",
+            password="password123"
+        )
 
-            <a href="/"
-               class="text-gray-600 hover:text-indigo-600 font-medium transition">
-                Home
-            </a>
+        self.user2 = User.objects.create_user(
+            username="jane",
+            password="password123"
+        )
 
-            {% if user.is_authenticated %}
+        self.order1 = Order.objects.create(
+            user=self.user1
+        )
 
-                <a href="/orders/"
-                   class="text-gray-600 hover:text-indigo-600 font-medium transition">
-                    My Orders
-                </a>
+        self.order2 = Order.objects.create(
+            user=self.user2
+        )
 
-                <span class="text-sm text-gray-500">
-                    Welcome, <strong class="text-gray-800">{{ user.username }}</strong>
-                </span>
+    def test_user_can_see_their_own_order(self):
 
-                <a href="{% url 'logout' %}"
-                   class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
-                    Logout
-                </a>
+        self.client.login(
+            username="john",
+            password="password123"
+        )
 
-            {% else %}
+        response = self.client.get(
+            reverse("order_list")
+        )
 
-                <a href="/login/"
-                   class="text-gray-600 hover:text-indigo-600 font-medium transition">
-                    Login
-                </a>
+        self.assertContains(
+            response,
+            f"#{self.order1.id}"
+        )
 
-                <a href="/register/"
-                   class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-                    Register
-                </a>
+    def test_user_cannot_see_another_users_order(self):
 
-            {% endif %}
+        self.client.login(
+            username="john",
+            password="password123"
+        )
 
-        </div>
-    </div>
-</nav>
+        response = self.client.get(
+            reverse("order_list")
+        )
 
-<!-- Main Content -->
-<main class="max-w-6xl mx-auto px-6 py-10">
-
-    {% block content %}
-    {% endblock %}
-
-</main>
-
-<footer class="bg-gradient-to-r from-indigo-950 via-purple-950 to-indigo-900 text-white mt-16">
-    <div class="max-w-6xl mx-auto px-6 py-10">
+        self.assertNotContains(
+            response,
+            f"Order {self.order2.id}"
+        )
 
 
-    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+class CategoryModelTest(TestCase):
 
-        <!-- Brand -->
-        <div class="text-center md:text-left">
-            <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
+    def test_category_creation(self):
 
-                <h3 class="text-2xl font-bold tracking-wide">
-                    Safi Style
-                </h3>
-            </div>
+        category = Category.objects.create(
+            name="Electronics"
+        )
 
-            <p class="text-indigo-200 text-sm">
-                Quality products. Simple shopping.
-            </p>
-        </div>
+        self.assertEqual(
+            category.name,
+            "Electronics"
+        )
+class ProductModelTest(TestCase):
 
-        <!-- Footer Links -->
-        <div class="flex items-center gap-6 text-sm">
-            <a href="/" class="text-indigo-200 hover:text-white transition">
-                Home
-            </a>
+    def test_product_creation(self):
 
-            {% if user.is_authenticated %}
-                <a href="/orders/" class="text-indigo-200 hover:text-white transition">
-                    My Orders
-                </a>
-            {% else %}
-                <a href="/login/" class="text-indigo-200 hover:text-white transition">
-                    Login
-                </a>
+        category = Category.objects.create(
+            name="Electronics"
+        )
 
-                <a href="/register/" class="text-indigo-200 hover:text-white transition">
-                    Register
-                </a>
-            {% endif %}
-        </div>
+        product = Product.objects.create(
+            name="Laptop",
+            price=1000,
+            category=category
+        )
 
-    </div>
+        self.assertEqual(
+            product.name,
+            "Laptop"
+        )
 
-    <!-- Bottom -->
-    <div class="border-t border-white/10 mt-8 pt-5 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <p class="text-xs text-indigo-300">
-            &copy; 2026 Safi Style Store
-        </p>
-    </div>
-
-</div>
+        self.assertEqual(
+            product.price,
+            1000
+        )
 
 
-</footer>
+class OrderModelTest(TestCase):
 
-</body>
-</html>
+    def test_order_creation(self):
+
+        user = User.objects.create_user(
+            username="john",
+            password="password123"
+        )
+
+        order = Order.objects.create(
+            user=user
+        )
+
+        self.assertEqual(
+            order.user,
+            user
+        )
+
+        self.assertIsNotNone(
+            order.created_at
+        )
+
+class OrderItemModelTest(TestCase):
+
+    def test_order_item_creation(self):
+
+        user = User.objects.create_user(
+            username="john",
+            password="password123"
+        )
+
+        category = Category.objects.create(
+            name="Electronics"
+        )
+
+        product = Product.objects.create(
+            name="Laptop",
+            price=1000,
+            category=category
+        )
+
+        order = Order.objects.create(
+            user=user
+        )
+
+        order_item = OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=2
+        )
+
+        self.assertEqual(
+            order_item.order,
+            order
+        )
+
+        self.assertEqual(
+            order_item.product,
+            product
+        )
+
+        self.assertEqual(
+            order_item.quantity,
+            2
+        )
+
+class LogoutTest(TestCase):
+
+    def setUp(self):
+
+        self.user = User.objects.create_user(
+            username="john",
+            password="password123"
+        )
+
+    def test_user_can_logout(self):
+
+        self.client.login(
+            username="john",
+            password="password123"
+        )
+
+        self.client.get(
+            reverse("logout")
+        )
+
+        response = self.client.get(
+            reverse("order_list")
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302
+        )
