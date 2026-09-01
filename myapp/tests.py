@@ -163,7 +163,7 @@ class OrderOwnershipTest(TestCase):
 
         self.assertContains(
             response,
-            f"Order {self.order1.id}"
+            f"#{self.order1.id}"
         )
 
     def test_user_cannot_see_another_users_order(self):
